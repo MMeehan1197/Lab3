@@ -70,40 +70,40 @@ public class Hand {
 		CardsInHand.add(d.Draw());
 		return this;
 	}
-	
-	public boolean isJokerInHand(Hand h){
+
+	public boolean isJokerInHand(Hand h) {
 		boolean jokerInHand = false;
-		for(Card c: h.getCardsInHand()){
-			if(c.geteRank() == eRank.JOKER && c.geteSuit() == eSuit.JOKER){
+		for (Card c : h.getCardsInHand()) {
+			if (c.geteRank() == eRank.JOKER && c.geteSuit() == eSuit.JOKER) {
 				jokerInHand = true;
 			}
 		}
 		return jokerInHand;
 	}
-	
-	public static int JokersInHand(Hand h){
+
+	public static int JokersInHand(Hand h) {
 		int jokersInHand = 0;
-		// Finish this part using the helper method I defined above for checking if there is a joker in your hand 
-		for(Card card : h.getCardsInHand()){
-			if(h.getCardsInHand().contains(new Card(eSuit.JOKER,eRank.JOKER, jokersInHand))){
+		// Finish this part using the helper method I defined above for checking
+		// if there is a joker in your hand
+		for (Card card : h.getCardsInHand()) {
+			if (h.getCardsInHand().contains(new Card(eSuit.JOKER, eRank.JOKER, jokersInHand))) {
 				jokersInHand += 1;
 			}
 		}
 		return jokersInHand;
 	}
-	
-	//Compare multiple hands and return the best hand
-	public static Hand PickBestHand(ArrayList<Hand> Hands) throws exHand{
-		for(Hand h : Hands){
+
+	// Compare multiple hands and return the best hand
+	public static Hand PickBestHand(ArrayList<Hand> Hands) throws exHand {
+		for (Hand h : Hands) {
 			Collections.sort(Hands, HandRank);
 		}
-			if(Hands.get(0).getHandScore() == Hands.get(1).getHandScore()){
-				throw new exHand(Hands.get(0));
-			}
-			return Hands.get(0);
+		if (Hands.get(0).getHandScore() == Hands.get(1).getHandScore()) {
+			throw new exHand(Hands.get(0));
+		}
+		return Hands.get(0);
 	}
-	
-	
+
 	/**
 	 * EvaluateHand is a static method that will score a given Hand of cards
 	 * 
@@ -126,7 +126,7 @@ public class Hand {
 			Class<?> c = Class.forName("pokerBase.Hand");
 
 			for (eHandStrength hstr : eHandStrength.values()) {
-					
+
 				Class[] cArg = new Class[2];
 				cArg[0] = pokerBase.Hand.class;
 				cArg[1] = pokerBase.HandScore.class;
@@ -139,11 +139,11 @@ public class Hand {
 				if ((Boolean) o && JokersInHand(h) == 0) {
 					break;
 				}
-				
-				else if(JokersInHand(h) >= 1){
-					
+
+				else if (JokersInHand(h) >= 1) {
+
 				}
-					
+
 			}
 
 			h.bScored = true;
@@ -165,13 +165,53 @@ public class Hand {
 		}
 		return h;
 	}
-	
-	
-	
-	public static Hand ExplodeHand(ArrayList<Hand> Hands){
-		for(Hand hand : Hands){
-			hand.getCardsInHand().get(h)
+
+	public static ArrayList<Hand> ExplodeHand(Hand h) {
+		ArrayList<Hand> hands = new ArrayList<Hand>();
+
+		
+		//Handles if 4 of the five cards in your hand are Jokers
+		if (h.getCardsInHand().get(3).geteRank() == eRank.JOKER
+				&& h.getCardsInHand().get(4).geteRank() != eRank.JOKER) {
+			Hand FoaK = new Hand();
+			FoaK.AddCardToHand(new Card(eSuit.CLUBS, h.getCardsInHand().get(4).geteRank(),
+					h.getCardsInHand().get(4).geteRank().getiRankNbr()));
+			FoaK.AddCardToHand(new Card(eSuit.CLUBS, h.getCardsInHand().get(4).geteRank(),
+					h.getCardsInHand().get(4).geteRank().getiRankNbr()));
+			FoaK.AddCardToHand(new Card(eSuit.CLUBS, h.getCardsInHand().get(4).geteRank(),
+					h.getCardsInHand().get(4).geteRank().getiRankNbr()));
+			FoaK.AddCardToHand(new Card(eSuit.CLUBS, h.getCardsInHand().get(4).geteRank(),
+					h.getCardsInHand().get(4).geteRank().getiRankNbr()));
+			FoaK.AddCardToHand(new Card(eSuit.CLUBS, h.getCardsInHand().get(4).geteRank(),
+					h.getCardsInHand().get(4).geteRank().getiRankNbr()));
+			hands.add(FoaK);
+			return hands;
 		}
+
+		
+		//Handles if all of the cards in your hand are Jokers
+		if (h.getCardsInHand().get(4).geteRank() == eRank.JOKER) {
+			Hand aces = new Hand();
+			aces.AddCardToHand(new Card(eSuit.CLUBS, eRank.ACE, eRank.ACE.getiRankNbr()));
+			aces.AddCardToHand(new Card(eSuit.CLUBS, eRank.ACE, eRank.ACE.getiRankNbr()));
+			aces.AddCardToHand(new Card(eSuit.CLUBS, eRank.ACE, eRank.ACE.getiRankNbr()));
+			aces.AddCardToHand(new Card(eSuit.CLUBS, eRank.ACE, eRank.ACE.getiRankNbr()));
+			aces.AddCardToHand(new Card(eSuit.CLUBS, eRank.ACE, eRank.ACE.getiRankNbr()));
+			hands.add(aces);
+			return hands;
+		}
+
+		hands.add(h);
+
+		for (int q = 0; q < 3; q++) {
+			if (hands.get(0).getCardsInHand().get(0).geteRank() == eRank.JOKER) {
+				hands.get(0).getCardsInHand().remove(0);
+				for (eRank e : eRank.values()) {
+					hands.add(h.AddCardToHand(new Card(h.getCardsInHand().get(4).geteSuit(), e, e.getiRankNbr())));
+				}
+			}
+		}
+		return hands;
 	}
 
 	private static boolean isHandFlush(ArrayList<Card> cards) {
@@ -198,13 +238,13 @@ public class Hand {
 		int iStartCard = 0;
 		highCard.seteRank(cards.get(eCardNo.FirstCard.getCardNo()).geteRank());
 		highCard.seteSuit(cards.get(eCardNo.FirstCard.getCardNo()).geteSuit());
-		
+
 		if (cards.get(eCardNo.FirstCard.getCardNo()).geteRank() == eRank.ACE) {
 			// First card is an 'ace', handle aces
 			bAce = true;
 			iStartCard++;
 		}
-						
+
 		for (int a = iStartCard; a < cards.size() - 1; a++) {
 			if ((cards.get(a).geteRank().getiRankNbr() - cards.get(a + 1).geteRank().getiRankNbr()) == 1) {
 				bIsStraight = true;
